@@ -3,7 +3,6 @@ Django Carton
 =============
 
 
-    :::text
       +------+
      /|     /|
     +-+----+ |    django-carton is a simple and lightweight container

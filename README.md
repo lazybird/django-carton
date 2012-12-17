@@ -5,7 +5,7 @@ Django Carton
 
       +------+
      /|     /|
-    +-+----+ |    django-carton is a simple and lightweight container
+    +-+----+ |    django-carton is a simple and lightweight application
     | |    | |    for shopping carts and wish lists.
     | +----+-+
     |/     |/
@@ -16,7 +16,7 @@ Django Carton
 * Simple: You decide how to implement the views, templates and payment
   processing.
 * Lightweight: The cart lives in the session.
-* A container: You define your product model the way you want.
+* Just a container: You define your product model the way you want.
 
 
 Usage Example
@@ -85,6 +85,10 @@ Installation
 
 Just install the package using something like pip and add ``carton`` to
 your ``INSTALLED_APPS`` setting.
+
+This is how you run tests:
+
+    ./manage.py test tests --settings=carton.tests.settings
 
 
 Abstract
@@ -247,3 +251,35 @@ Remove a single occurrence of a product:
     >>> cart.total
     0
 
+
+Settings
+--------
+
+### Template Tag Name
+
+You can retrieve the cart in templates using
+`{% get_cart as my_cart %}`.
+
+You can change the name of this template tag using the
+`CART_TEMPLATE_TAG_NAME` setting.
+
+
+    # In you project settings
+    CART_TEMPLATE_TAG_NAME = 'get_basket'
+
+    # In templates
+    {% load carton_tags %}
+    {% get_basket as my_basket %}
+
+
+### Stale Items
+
+Cart items are associated to products in the database.
+Products that were added to the cart and then removed from the
+database are called stale items. The `CART_REMOVE_STALE_ITEMS` defines
+whether stales items should be automatically removed from the cart. By
+default they are removed.
+
+### Session Key
+
+The `CART_SESSION_KEY` settings controls the name of the session key.

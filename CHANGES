@@ -1,3 +1,19 @@
+django-carton-1.0.0
+===================
+
+Date: August 15, 2013.
+
+Enhancements
+------------
+
+* Updated multiple cart support in documentation (#2)
+* Improved stale items handling (#1)
+* Other minor documentation updates
+
+
+* * *
+
+
 django-carton-0.1.0
 ===================
 

@@ -88,6 +88,8 @@ add, show and remove products like this:
 Installation
 ------------
 
+This application requires Django version 1.4, all versions above should be fine.
+
 Just install the package using something like pip and add ``carton`` to
 your ``INSTALLED_APPS`` setting.
 

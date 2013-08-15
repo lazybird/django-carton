@@ -30,6 +30,18 @@ class CartTests(TestCase):
         self.assertContains(response, '1 deer for $10.0')
         self.assertContains(response, '1 moose for $20.0')
 
+    def test_stale_item_is_removed_from_cart(self):
+        # Items that are not anymore reference in the database should not be kept in cart.
+        self.client.post(self.url_add, self.deer_data)
+        self.client.post(self.url_add, self.moose_data)
+        response = self.client.get(self.url_show)
+        self.assertContains(response, 'deer')
+        self.assertContains(response, 'moose')
+        self.deer.delete()
+        response = self.client.get(self.url_show)
+        self.assertNotContains(response, 'deer')
+        self.assertContains(response, 'moose')
+
     def test_quantity_increases(self):
         self.client.post(self.url_add, self.deer_data)
         self.deer_data['quantity'] = 2

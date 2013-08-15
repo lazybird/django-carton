@@ -46,19 +46,20 @@ class Cart(object):
 
     def remove_stale_items(self):
         """
-        Removed stale items. They are associated with a product that's no longer
+        Removes stale items - they are associated with a product that's no longer
         referenced in the database.
         """
-        for product in self.products:
-            if not self.product_exists_in_database(product):
-                del self._items_dict[product.pk]
-
-    def product_exists_in_database(self, product):
-        """
-        Returns True if the given instance exists in the database.
-        """
-        model_class = type(product)
-        return model_class.objects.filter(pk=product.pk).exists()
+        if not self.products:
+            return None
+        ids_in_cart = set([product.id for product in self.products])
+        # We retrieve the model class based on the first instance,
+        # assuming all products in the cart are of the same model.
+        model_class = type(self.products[0])
+        ids_in_database = set(model_class.objects.filter(
+            id__in=ids_in_cart).values_list('id', flat=True))
+        removed_product_ids = ids_in_cart - ids_in_database
+        for product_id in removed_product_ids:
+            del self._items_dict[product_id]
 
     def add(self, product, price=None, quantity=1):
         """

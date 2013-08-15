@@ -53,6 +53,11 @@ Template:
         {{ item.total_price }}
     {% endfor %}
 
+    You can also use this convinent shortcut:
+    {% for product in cart.products %}
+        {{ product.name }}
+    {% endfor %}
+
 
 This project is shipped with an application example called ``shopping``
 implementing basic add, remove, display features.

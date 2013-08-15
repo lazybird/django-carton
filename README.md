@@ -88,7 +88,7 @@ add, show and remove products like this:
 Installation
 ------------
 
-This application requires Django version 1.4, all versions above should be fine.
+This application requires Django version 1.4; all versions above should be fine.
 
 Just install the package using something like pip and add ``carton`` to
 your ``INSTALLED_APPS`` setting.
@@ -262,7 +262,7 @@ Remove a single occurrence of a product:
 Multiple carts
 --------------
 
-Django carton has support for using multiple carts in the same project.
+Django Carton has support for using multiple carts in the same project.
 The carts would need to be stored in Django session using different session
 keys.
 

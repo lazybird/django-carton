@@ -257,6 +257,19 @@ Remove a single occurrence of a product:
     0
 
 
+Multiple carts
+--------------
+
+Django carton has support for using multiple carts in the same project.
+The carts would need to be stored in Django session using different session
+keys.
+
+    from carton.cart import Cart
+
+    cart_1 = Cart(session=request.session, session_key='CART-1')
+    cart_2 = Cart(session=request.session, session_key='CART-2')
+
+
 Settings
 --------
 

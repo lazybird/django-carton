@@ -145,7 +145,6 @@ These are simple operations to add, remove and access cart items:
     >>> cart.total
     Decimal('3.5')
 
-
 Note how we check weather the product is in the cart - The following
 statements are different ways to do the same thing:
 
@@ -178,10 +177,22 @@ Increase the quantity by adding more products:
     >>> cart.total
     Decimal('3.0')
 
+
 Note that the price is only needed when you add a product for the first time.
 
     >>> cart.add(orange)
     *** ValueError: Missing price when adding a cart item.
+
+
+You can tell how many items are in your cart:
+
+    >>> cart.clear()
+    >>> cart.add(apple, price=1.5)
+    >>> cart.add(orange, price=2.0, quantity=3)
+    >>> cart.count
+    4
+    >>> cart.unique_count  # Regarless of product's quantity
+    2
 
 
 You can add several products at the same time:

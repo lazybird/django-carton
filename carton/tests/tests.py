@@ -49,6 +49,14 @@ class CartTests(TestCase):
         response = self.client.get(self.url_show)
         self.assertContains(response, '3 deer')
 
+    def test_items_are_counted_properly(self):
+        self.deer_data['quantity'] = 2
+        self.client.post(self.url_add, self.deer_data)
+        self.client.post(self.url_add, self.moose_data)
+        response = self.client.get(self.url_show)
+        self.assertContains(response, 'items count: 3')
+        self.assertContains(response, 'unique count: 2')
+
     def test_price_is_updated(self):
         # Let's give a discount: $1.5/product. That's handled on the test views.
         self.deer_data['quantity'] = 2

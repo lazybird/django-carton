@@ -9,10 +9,12 @@ def show(request):
     response = ''
     for item in cart.items:
         response += '%(quantity)s %(item)s for $%(price)s\n' % {
-        'quantity': item.quantity,
-        'item': item.product.name,
-        'price': item.subtotal,
-    }
+            'quantity': item.quantity,
+            'item': item.product.name,
+            'price': item.subtotal,
+        }
+        response += 'items count: %s\n' % cart.count
+        response += 'unique count: %s\n' % cart.unique_count
     return HttpResponse(response)
 
 

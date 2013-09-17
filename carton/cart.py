@@ -127,6 +127,20 @@ class Cart(object):
         return self._items_dict.values()
 
     @property
+    def count(self):
+        """
+        The number of items in cart, that's the sum of quantities.
+        """
+        return sum([item.quantity for item in self.items])
+
+    @property
+    def unique_count(self):
+        """
+        The number of unique items in cart, regardless of the quantity.
+        """
+        return len(self._items_dict)
+
+    @property
     def products(self):
         """
         The list of associated products.

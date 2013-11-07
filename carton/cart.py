@@ -51,15 +51,15 @@ class Cart(object):
         """
         if not self.products:
             return None
-        ids_in_cart = set([product.id for product in self.products])
+        ids_in_cart = set([product.pk for product in self.products])
         # We retrieve the model class based on the first instance,
         # assuming all products in the cart are of the same model.
         model_class = type(self.products[0])
         ids_in_database = set(model_class.objects.filter(
-            id__in=ids_in_cart).values_list('id', flat=True))
+            pk__in=ids_in_cart).values_list('pk', flat=True))
         removed_product_ids = ids_in_cart - ids_in_database
-        for product_id in removed_product_ids:
-            del self._items_dict[product_id]
+        for product_pk in removed_product_ids:
+            del self._items_dict[product_pk]
 
     def add(self, product, price=None, quantity=1):
         """

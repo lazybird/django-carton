@@ -7,16 +7,16 @@ from carton.tests.models import Product
 class CartTests(TestCase):
 
     def setUp(self):
-        self.deer = Product.objects.create(name='deer', price=10.0)
-        self.moose = Product.objects.create(name='moose', price=20.0)
+        self.deer = Product.objects.create(name='deer', price=10.0, custom_id=1)
+        self.moose = Product.objects.create(name='moose', price=20.0, custom_id=2)
         self.url_add = reverse('carton-tests-add')
         self.url_show = reverse('carton-tests-show')
         self.url_remove = reverse('carton-tests-remove')
         self.url_remove_single = reverse('carton-tests-remove-single')
         self.url_quantity = reverse('carton-tests-set-quantity')
         self.url_clear = reverse('carton-tests-clear')
-        self.deer_data = {'product_id': self.deer.id}
-        self.moose_data = {'product_id': self.moose.id}
+        self.deer_data = {'product_id': self.deer.pk}
+        self.moose_data = {'product_id': self.moose.pk}
 
     def test_product_is_added(self):
         self.client.post(self.url_add, self.deer_data)
@@ -70,7 +70,7 @@ class CartTests(TestCase):
         self.deer_data['quantity'] = 3
         self.client.post(self.url_add, self.deer_data)
         self.client.post(self.url_add, self.moose_data)
-        remove_data = {'product_id': self.deer.id}
+        remove_data = {'product_id': self.deer.pk}
         self.client.post(self.url_remove, remove_data)
         response = self.client.get(self.url_show)
         self.assertNotContains(response, 'deer')
@@ -79,7 +79,7 @@ class CartTests(TestCase):
     def test_single_product_is_removed(self):
         self.deer_data['quantity'] = 3
         self.client.post(self.url_add, self.deer_data)
-        remove_data = {'product_id': self.deer.id}
+        remove_data = {'product_id': self.deer.pk}
         self.client.post(self.url_remove_single, remove_data)
         response = self.client.get(self.url_show)
         self.assertContains(response, '2 deer')

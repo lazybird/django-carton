@@ -20,7 +20,7 @@ def show(request):
 
 def add(request):
     cart = Cart(request.session)
-    product = Product.objects.get(id=request.POST.get('product_id'))
+    product = Product.objects.get(pk=request.POST.get('product_id'))
     quantity = request.POST.get('quantity', 1)
     discount = request.POST.get('discount', 0)
     price = product.price - float(discount)
@@ -30,14 +30,14 @@ def add(request):
 
 def remove(request):
     cart = Cart(request.session)
-    product = Product.objects.get(id=request.POST.get('product_id'))
+    product = Product.objects.get(pk=request.POST.get('product_id'))
     cart.remove(product)
     return HttpResponse()
 
 
 def remove_single(request):
     cart = Cart(request.session)
-    product = Product.objects.get(id=request.POST.get('product_id'))
+    product = Product.objects.get(pk=request.POST.get('product_id'))
     cart.remove_single(product)
     return HttpResponse()
 
@@ -50,7 +50,7 @@ def clear(request):
 
 def set_quantity(request):
     cart = Cart(request.session)
-    product = Product.objects.get(id=request.POST.get('product_id'))
+    product = Product.objects.get(pk=request.POST.get('product_id'))
     quantity = request.POST.get('quantity')
     cart.set_quantity(product, quantity)
     return HttpResponse()

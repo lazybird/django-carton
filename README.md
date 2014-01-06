@@ -50,7 +50,7 @@ Template:
     {% for item in cart.items %}
         {{ item.product.name }}
         {{ item.quantity }}
-        {{ item.total_price }}
+        {{ item.subtotal }}
     {% endfor %}
 
     You can also use this convinent shortcut:

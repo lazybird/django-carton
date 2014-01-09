@@ -15,6 +15,13 @@ class CartItem(object):
     def __repr__(self):
         return u'CartItem Object (%s)' % self.product
 
+    def to_dict(self):
+        return {
+            'product_pk': self.product.pk,
+            'quantity': self.quantity,
+            'price': self.price,
+        }
+
     @property
     def subtotal(self):
         """
@@ -125,6 +132,13 @@ class Cart(object):
         The list of cart items.
         """
         return self._items_dict.values()
+
+    @property
+    def items_serializable(self):
+        """
+        The list of items formatted for serialization.
+        """
+        return [item.to_dict() for item in self.items]
 
     @property
     def count(self):

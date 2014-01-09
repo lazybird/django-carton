@@ -155,6 +155,10 @@ class Cart(object):
         return len(self._items_dict)
 
     @property
+    def is_empty(self):
+        return self.unique_count == 0
+
+    @property
     def products(self):
         """
         The list of associated products.

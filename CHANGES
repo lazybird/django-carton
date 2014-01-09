@@ -1,3 +1,18 @@
+django-carton-1.0.2
+===================
+
+Date: Janvier 9, 2014.
+
+Small Enhancements
+------------------
+
+* #8: Ability to check if cart is empty
+* #7: Ability to serialize cart content
+
+
+* * *
+
+
 django-carton-1.0.1
 ===================
 

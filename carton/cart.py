@@ -1,21 +1,7 @@
 from decimal import Decimal
 
 from carton import settings as carton_settings
-
-def get_product_model():
-    """
-    Returns the Product model that is used by this cart.
-    """
-    from django.db.models import get_model
-
-    try:
-        app_label, model_name = carton_settings.CART_PRODUCT_MODEL.split('.')
-    except ValueError:
-        raise ImproperlyConfigured("CART_PRODUCT_MODEL must be of the form 'app_label.model_name'")
-    product_model = get_model(app_label, model_name)
-    if product_model is None:
-        raise ImproperlyConfigured("CART_PRODUCT_MODEL refers to model '%s' that has not been installed" % carton_settings.CART_PRODUCT_MODEL)
-    return product_model
+from carton.module_loading import get_product_model
 
 
 class CartItem(object):
@@ -54,15 +40,15 @@ class Cart(object):
         self.session = session
         self.session_key = session_key or carton_settings.CART_SESSION_KEY
         self.model = model or get_product_model()
-        
-        # If there is already a cart data in session, we extract it
         if self.session_key in self.session:
-            session_data = self.session[self.session_key]
-            products = dict([(p.pk, p) for p in self.get_queryset([ci['product_pk'] for ci in session_data])])
-            for item in session_data:
-                product = products.get(item['product_pk'])
-                if product:
-                    self._items_dict[product.pk] = CartItem(product, item['quantity'], Decimal(item['price']))
+            # If a cart representation was previously stored in session, then we
+            # rebuild the cart object from that serialized representation.
+            cart_representation = self.session[self.session_key]
+            ids_in_cart = cart_representation.keys()
+            products_queryset = self.model.objects.filter(pk__in=ids_in_cart)
+            for product in products_queryset:
+                item = cart_representation[product.pk]
+                self._items_dict[product.pk] = CartItem(product, item['quantity'], Decimal(item['price']))
 
     def __contains__(self, product):
         """
@@ -70,20 +56,11 @@ class Cart(object):
         """
         return product in self.products
 
-    def get_queryset(self, item_pk_list):
-        """
-        Returns a queryset representing the products currently in cart.
-        Can be subclassed to provide finer control over which products are returned.
-        """
-        if item_pk_list:
-            return self.model.objects.filter(pk__in=item_pk_list)
-        return self.model.objects.none()
-    
     def update_session(self):
         """
-        Serializes the cart data, saves it to session and marks session as modified
+        Serializes the cart data, saves it to session and marks session as modified.
         """
-        self.session[self.session_key] = self.items_serializable
+        self.session[self.session_key] = self.cart_serializable
         self.session.modified = True
 
     def add(self, product, price=None, quantity=1):
@@ -114,7 +91,7 @@ class Cart(object):
         """
         Removes a single product by decreasing the quantity.
         """
-        if product in self.products:    
+        if product in self.products:
             if self._items_dict[product.pk].quantity <= 1:
                 # There's only 1 product left so we drop it
                 del self._items_dict[product.pk]
@@ -150,11 +127,24 @@ class Cart(object):
         return self._items_dict.values()
 
     @property
+    def cart_serializable(self):
+        """
+        The serializable representation of the cart.
+        For instance:
+        {
+            1: {'product_pk': 1, 'quantity': 2, price: '9.99'},
+            2: {'product_pk': 2, 'quantity': 3, price: '29.99'},
+        }
+        Note how the product pk servers as the dictionary key.
+        """
+        return dict((item.product.pk, item.to_dict()) for item in self.items)
+
+    @property
     def items_serializable(self):
         """
         The list of items formatted for serialization.
         """
-        return [item.to_dict() for item in self.items]
+        return self.cart_serializable.items()
 
     @property
     def count(self):

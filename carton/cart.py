@@ -1,5 +1,7 @@
 from decimal import Decimal
 
+from django.core.exceptions import ImproperlyConfigured
+
 from carton import settings as carton_settings
 
 

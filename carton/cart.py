@@ -73,15 +73,6 @@ class Cart(object):
         """
         return product in self.products
 
-    def get_queryset(self, item_pk_list):
-        """
-        Returns a queryset representing the products currently in cart.
-        Can be subclassed to provide finer control over which products are returned.
-        """
-        if item_pk_list:
-            return self.model.objects.filter(pk__in=item_pk_list)
-        return self.model.objects.none()
-
     def update_session(self):
         """
         Serializes the cart data, saves it to session and marks session as modified

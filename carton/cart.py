@@ -58,7 +58,7 @@ class Cart(object):
 
     def update_session(self):
         """
-        Serializes the cart data, saves it to session and marks session as modified
+        Serializes the cart data, saves it to session and marks session as modified.
         """
         self.session[self.session_key] = self.cart_serializable
         self.session.modified = True
@@ -91,7 +91,7 @@ class Cart(object):
         """
         Removes a single product by decreasing the quantity.
         """
-        if product in self.products:    
+        if product in self.products:
             if self._items_dict[product.pk].quantity <= 1:
                 # There's only 1 product left so we drop it
                 del self._items_dict[product.pk]
@@ -127,13 +127,6 @@ class Cart(object):
         return self._items_dict.values()
 
     @property
-    def items_serializable(self):
-        """
-        The list of items formatted for serialization.
-        """
-        return self.cart_serializable.items()
-
-    @property
     def cart_serializable(self):
         """
         The serializable representation of the cart.
@@ -146,6 +139,12 @@ class Cart(object):
         """
         return dict((item.product.pk, item.to_dict()) for item in self.items)
 
+    @property
+    def items_serializable(self):
+        """
+        The list of items formatted for serialization.
+        """
+        return self.cart_serializable.items()
 
     @property
     def count(self):

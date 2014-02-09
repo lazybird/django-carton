@@ -2,6 +2,7 @@ from decimal import Decimal
 
 from carton import settings as carton_settings
 
+
 def get_product_model():
     """
     Returns the Product model that is used by this cart.
@@ -54,7 +55,7 @@ class Cart(object):
         self.session = session
         self.session_key = session_key or carton_settings.CART_SESSION_KEY
         self.model = model or get_product_model()
-        
+
         # If there is already a cart data in session, we extract it
         if self.session_key in self.session:
             session_data = self.session[self.session_key]
@@ -78,7 +79,7 @@ class Cart(object):
         if item_pk_list:
             return self.model.objects.filter(pk__in=item_pk_list)
         return self.model.objects.none()
-    
+
     def update_session(self):
         """
         Serializes the cart data, saves it to session and marks session as modified

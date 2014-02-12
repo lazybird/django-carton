@@ -48,7 +48,9 @@ class Cart(object):
             products_queryset = self.get_queryset().filter(pk__in=ids_in_cart)
             for product in products_queryset:
                 item = cart_representation[product.pk]
-                self._items_dict[product.pk] = CartItem(product, item['quantity'], Decimal(item['price']))
+                self._items_dict[product.pk] = CartItem(
+                    product, item['quantity'], Decimal(item['price'])
+                )
 
     def __contains__(self, product):
         """

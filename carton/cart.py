@@ -32,6 +32,8 @@ class CartItem(object):
 
 
 class Cart(object):
+    queryset = None
+    
     """
     A cart that lives in the session.
     """
@@ -59,7 +61,7 @@ class Cart(object):
         return product in self.products
 
     def get_queryset(self):
-        return self.product_model._default_manager.all()
+        return self.queryset or self.product_model._default_manager.all()
 
     def update_session(self):
         """

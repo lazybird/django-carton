@@ -307,10 +307,7 @@ You can change the name of this template tag using the
 
 Cart items are associated to products in the database. Sometime a product can be found
 in the cart when its database instance has been removed. These items are called stale
-items. The `CART_REMOVE_STALE_ITEMS` setting defines whether stale items should be
-automatically removed from the cart. By default they are removed. Removing stale items
-is a silent operation that occurs every time the cart object is used. If site performance
-is a concern, consider disabling this feature.
+items. By default they are removed from the cart.
 
 ### Session Key
 

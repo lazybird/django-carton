@@ -41,7 +41,7 @@ class Cart(object):
         self._items_dict = {}
         self.session = session
         self.session_key = session_key or carton_settings.CART_SESSION_KEY
-        self.product_model = product_model or get_product_model()
+        self.product_model = product_model
         if self.session_key in self.session:
             # If a cart representation was previously stored in session, then we
             # rebuild the cart object from that serialized representation.
@@ -61,7 +61,10 @@ class Cart(object):
         return product in self.products
 
     def get_queryset(self):
-        return self.queryset or self.product_model._default_manager.all()
+        if self.queryset is not None:
+            return self.queryset
+        product_model = self.product_model or get_product_model()
+        return product_model._default_manager.all()
 
     def update_session(self):
         """

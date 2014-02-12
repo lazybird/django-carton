@@ -1,7 +1,19 @@
+django-carton-1.1.0
+===================
+
+Date:  February 12, 2014.
+
+* #10: Changed so only Cart state is saved to session, not the whole cart object
+* #9: Doesn't work with django 1.6 out of the box
+
+
+* * *
+
+
 django-carton-1.0.2
 ===================
 
-Date: Janvier 9, 2014.
+Date: January 9, 2014.
 
 Small Enhancements
 ------------------

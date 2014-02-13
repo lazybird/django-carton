@@ -1,3 +1,24 @@
+django-carton-1.1.2
+===================
+
+Date:  February 13, 2014.
+
+* Fixed a but in template tags.
+
+
+* * *
+
+
+django-carton-1.1.1
+===================
+
+Date:  February 13, 2014.
+
+* Released with wrong version in setup.
+
+* * *
+
+
 django-carton-1.1.0
 ===================
 

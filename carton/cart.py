@@ -49,7 +49,7 @@ class Cart(object):
             ids_in_cart = cart_representation.keys()
             products_queryset = self.get_queryset().filter(pk__in=ids_in_cart)
             for product in products_queryset:
-                item = cart_representation[product.pk]
+                item = cart_representation[str(product.pk)]
                 self._items_dict[product.pk] = CartItem(
                     product, item['quantity'], Decimal(item['price'])
                 )
@@ -142,12 +142,18 @@ class Cart(object):
         The serializable representation of the cart.
         For instance:
         {
-            1: {'product_pk': 1, 'quantity': 2, price: '9.99'},
-            2: {'product_pk': 2, 'quantity': 3, price: '29.99'},
+            '1': {'product_pk': 1, 'quantity': 2, price: '9.99'},
+            '2': {'product_pk': 2, 'quantity': 3, price: '29.99'},
         }
         Note how the product pk servers as the dictionary key.
         """
-        return dict((item.product.pk, item.to_dict()) for item in self.items)
+        cart_representation = {}
+        for item in self.items:
+            # JSON serialization: object attribute should be a string
+            product_id = str(item.product.pk)
+            cart_representation[product_id] = item.to_dict()
+        return cart_representation
+
 
     @property
     def items_serializable(self):

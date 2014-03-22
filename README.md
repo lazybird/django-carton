@@ -95,7 +95,7 @@ your ``INSTALLED_APPS`` setting.
 
 This is how you run tests:
 
-    ./manage.py test tests --settings=carton.tests.settings
+    ./manage.py test carton.tests --settings=carton.tests.settings
 
 
 Abstract

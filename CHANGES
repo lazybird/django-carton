@@ -1,5 +1,5 @@
 django-carton-1.1.2
-===================
+-------------------
 
 Date:  February 13, 2014.
 
@@ -10,7 +10,7 @@ Date:  February 13, 2014.
 
 
 django-carton-1.1.1
-===================
+-------------------
 
 Date:  February 13, 2014.
 
@@ -20,7 +20,7 @@ Date:  February 13, 2014.
 
 
 django-carton-1.1.0
-===================
+-------------------
 
 Date:  February 12, 2014.
 
@@ -32,12 +32,10 @@ Date:  February 12, 2014.
 
 
 django-carton-1.0.2
-===================
+-------------------
 
 Date: January 9, 2014.
 
-Small Enhancements
-------------------
 
 * #8: Ability to check if cart is empty
 * #7: Ability to serialize cart content
@@ -47,12 +45,9 @@ Small Enhancements
 
 
 django-carton-1.0.1
-===================
+-------------------
 
 Date: November 7, 2013.
-
-Bug fixes
----------
 
 * #6: Django 1.6 compatibility - the `urls` module path have changed 
 * #5: Support for products that use a custom primary key 
@@ -63,12 +58,9 @@ Bug fixes
 
 
 django-carton-1.0.0
-===================
+-------------------
 
 Date: August 15, 2013.
-
-Enhancements
-------------
 
 * Updated multiple cart support in documentation (#2)
 * Improved stale items handling (#1)
@@ -79,7 +71,7 @@ Enhancements
 
 
 django-carton-0.1.0
-===================
+-------------------
 
 Date: April 17, 2013
 

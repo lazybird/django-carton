@@ -1,5 +1,7 @@
 from decimal import Decimal
 
+from django.conf import settings
+
 from carton import module_loading
 from carton import settings as carton_settings
 
@@ -61,9 +63,20 @@ class Cart(object):
     def get_product_model(self):
         return module_loading.get_product_model()
 
+    def filter_products(self, queryset):
+        """
+        Applies lookup parameters defined in settings.
+        """
+        lookup_parameters = getattr(settings, 'CART_PRODUCT_LOOKUP', None)
+        if lookup_parameters:
+            queryset = queryset.filter(**lookup_parameters)
+        return queryset
+
     def get_queryset(self):
         product_model = self.get_product_model()
-        return product_model._default_manager.all()
+        queryset = product_model._default_manager.all()
+        queryset = self.filter_products(queryset)
+        return queryset
 
     def update_session(self):
         """

@@ -1,7 +1,9 @@
 from decimal import Decimal
 
+from django.conf import settings
+
+from carton import module_loading
 from carton import settings as carton_settings
-from carton.module_loading import get_product_model
 
 
 class CartItem(object):
@@ -32,18 +34,16 @@ class CartItem(object):
 
 
 class Cart(object):
-    queryset = None
-    
+
     """
     A cart that lives in the session.
     """
-    def __init__(self, session, session_key=None, product_model=None):
+    def __init__(self, session, session_key=None):
         self._items_dict = {}
         self.session = session
         self.session_key = session_key or carton_settings.CART_SESSION_KEY
-        self.product_model = product_model
-        if self.session_key in self.session:
             # If a cart representation was previously stored in session, then we
+        if self.session_key in self.session:
             # rebuild the cart object from that serialized representation.
             cart_representation = self.session[self.session_key]
             ids_in_cart = cart_representation.keys()
@@ -60,11 +60,23 @@ class Cart(object):
         """
         return product in self.products
 
+    def get_product_model(self):
+        return module_loading.get_product_model()
+
+    def filter_products(self, queryset):
+        """
+        Applies lookup parameters defined in settings.
+        """
+        lookup_parameters = getattr(settings, 'CART_PRODUCT_LOOKUP', None)
+        if lookup_parameters:
+            queryset = queryset.filter(**lookup_parameters)
+        return queryset
+
     def get_queryset(self):
-        if self.queryset is not None:
-            return self.queryset
-        product_model = self.product_model or get_product_model()
-        return product_model._default_manager.all()
+        product_model = self.get_product_model()
+        queryset = product_model._default_manager.all()
+        queryset = self.filter_products(queryset)
+        return queryset
 
     def update_session(self):
         """

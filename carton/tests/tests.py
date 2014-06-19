@@ -1,7 +1,11 @@
 from django.core.urlresolvers import reverse
 from django.test import TestCase
-
 from carton.tests.models import Product
+
+try:
+    from django.test import override_settings
+except ImportError:
+    from  django.test.utils import override_settings
 
 
 class CartTests(TestCase):
@@ -99,3 +103,15 @@ class CartTests(TestCase):
         response = self.client.get(self.url_show)
         self.assertNotContains(response, 'deer')
         self.assertNotContains(response, 'moose')
+
+    @override_settings(CART_PRODUCT_LOOKUP={'price__gt': 1})
+    def test_custom_product_filter_are_applied(self):
+        # We modify the queryset to exclude some products. For these excluded
+        # we should not be able to add them in the cart.
+        exclude = Product.objects.create(name='EXCLUDE', price=0.99, custom_id=100)
+        exclude_data = {'product_id': exclude.pk}
+        self.client.post(self.url_add, self.deer_data)
+        self.client.post(self.url_add, exclude_data)
+        response = self.client.get(self.url_show)
+        self.assertNotContains(response, 'EXCLUDE')
+        self.assertContains(response, 'deer')

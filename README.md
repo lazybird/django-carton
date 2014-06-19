@@ -58,6 +58,10 @@ Template:
         {{ product.name }}
     {% endfor %}
 
+Settings:
+
+    CART_PRODUCT_MODEL = 'products.models.Product'
+
 
 This project is shipped with an application example called ``shopping``
 implementing basic add, remove, display features.
@@ -92,6 +96,8 @@ This application requires Django version 1.4; all versions above should be fine.
 
 Just install the package using something like pip and add ``carton`` to
 your ``INSTALLED_APPS`` setting.
+
+Add the `CART_PRODUCT_MODEL` setting, a dotted path to your product model.
 
 This is how you run tests:
 
@@ -281,6 +287,38 @@ keys.
 
     cart_1 = Cart(session=request.session, session_key='CART-1')
     cart_2 = Cart(session=request.session, session_key='CART-2')
+
+
+Working With Product Model
+--------------------------
+
+Django Carton needs to know how to list your product objects.
+
+The default behaviour is to get the product model using the
+`CART_PRODUCT_MODEL` setting and list all products.
+
+The default queryset manager is used and all products are
+retrieved. You can filter products by defining some lookup
+parameters in `CART_PRODUCT_LOOKUP` setting.
+
+    # settings.py
+
+    CART_PRODUCT_LOOKUP = {
+        'published': True,
+        'status': 'A',
+    }
+
+
+If you need further customization of the way product model and queryset
+are retrieved, you can always sub-class the default `Cart` and overwrite
+the `get_queryset` method. In that case, you should take into account that:
+
+* You probably won't need `CART_PRODUCT_MODEL` and `CART_PRODUCT_LOOKUP`
+  if you get a direct access to your product model and define the
+  filtering directly on the cart sub-class.
+* You probably have to write your own template tag to retrieve the cart
+  since the default `get_cart` template tag point on the `Cart` class
+  defined by django-carton.
 
 
 Settings

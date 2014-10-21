@@ -8,7 +8,7 @@ def _get_module(dotted_path):
     """
     Returns the entity that is imported from dotted path.
     """
-    package, module = settings.CART_PRODUCT_MODEL.rsplit('.', 1)
+    package, module = dotted_path.rsplit('.', 1)
     return getattr(import_module(package), module)
 
 

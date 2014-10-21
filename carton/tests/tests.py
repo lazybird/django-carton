@@ -115,3 +115,20 @@ class CartTests(TestCase):
         response = self.client.get(self.url_show)
         self.assertNotContains(response, 'EXCLUDE')
         self.assertContains(response, 'deer')
+
+    @override_settings(CART_ITEM_CLASS='carton.tests.cart.TestCartItem')
+    def test_custom_cart_item_is_used(self):
+        # We use custom (test) cart item with specific method for total price
+        # calculation, and expect the price to differs for more than one item
+        # of the same type (according to the discount se in that test class).
+        self.client.post(self.url_add, self.deer_data)
+        response = self.client.get(self.url_show)
+        # This is still the same as in `test_product_is_added`:
+        self.assertContains(response, '1 deer for $10.0')
+
+        # Now add another one:
+        self.client.post(self.url_add, self.deer_data)
+        response = self.client.get(self.url_show)
+        # And for that one, we should have `TestCartItem.DISCOUNT` applied
+        # (which is 15%):
+        self.assertContains(response, '2 deer for 18.0') # instead of $20.0

@@ -13,7 +13,6 @@ class TestCartItem(CartItem):
         The price for the first item is as earlier, but the price for each next
         entity of the same item in the cart is lowered for some discount.
         """
-        
         if self.quantity == 1:
             return super(TestCartItem, self).subtotal()
         else:

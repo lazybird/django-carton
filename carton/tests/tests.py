@@ -26,8 +26,12 @@ class BaseTestCase(TestCase):
         self.moose_data = {'product_id': self.moose.pk}
 
     def tearDown(self):
-        self.deer.delete()
-        self.moose.delete()
+        # Note that in some tests items might be deleted. Do not try to delete
+        # them twice.
+        if self.deer.pk is not None:
+            self.deer.delete()
+        if self.moose.pk is not None:
+            self.moose.delete()
 
 
 class CartTests(BaseTestCase):
@@ -156,4 +160,4 @@ class CustomizedCartItemTests(BaseTestCase):
         response = self.client.get(self.url_show)
         # And for that one, we should have `TestCartItem.DISCOUNT` applied
         # (which is 15%):
-        self.assertContains(response, '2 deer for 18.0') # instead of $20.0
+        self.assertContains(response, '2 deer for $18.0') # instead of $20.0

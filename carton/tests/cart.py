@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from carton.cart import CartItem
 
 
@@ -14,7 +16,7 @@ class TestCartItem(CartItem):
         entity of the same item in the cart is lowered for some discount.
         """
         if self.quantity == 1:
-            return super(TestCartItem, self).subtotal()
+            return self.price
         else:
-            return self.price + \
-                    self.price * self.quantity * (1 - self._DISCOUNT)
+            return self.price * Decimal(str(
+                    1 + (self.quantity - 1) * (1 - self._DISCOUNT)))

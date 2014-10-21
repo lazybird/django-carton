@@ -350,3 +350,10 @@ items. By default they are removed from the cart.
 ### Session Key
 
 The `CART_SESSION_KEY` settings controls the name of the session key.
+
+### Customized Cart Item class
+
+The `CART_ITEM_CLASS` settings may contain a dotted path to your extension of
+`carton.cart.CartItem` class (which is the default value). This might get handy
+in case you need some specific pricing model for items (like some discounts for
+ordering more than one entity of the same item).

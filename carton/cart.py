@@ -39,7 +39,7 @@ class Cart(object):
     A cart that lives in the session.
     """
     def __init__(self, session, session_key=None):
-        self.cart_item_class = eval(carton_settings.CART_ITEM_CLASS)
+        self.cart_item_class = module_loading.get_cart_item_class()
         self._items_dict = {}
         self.session = session
         self.session_key = session_key or carton_settings.CART_SESSION_KEY

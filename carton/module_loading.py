@@ -1,6 +1,8 @@
 from django.conf import settings
 from django.utils.importlib import import_module
 
+from carton import settings as carton_settings
+
 
 def _get_module(dotted_path):
     """
@@ -21,4 +23,4 @@ def get_cart_item_class():
     """
     Returns the class that is used by this cart for its items.
     """
-    return _get_module(settings.CART_ITEM_CLASS)
+    return _get_module(carton_settings.CART_ITEM_CLASS)

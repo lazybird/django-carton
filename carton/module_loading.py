@@ -1,5 +1,10 @@
+import django
 from django.conf import settings
-from importlib import import_module
+
+if django.VERSION[:2] == (1, 9):
+    from importlib import import_module
+else:
+    from django.utils.importlib import import_module
 
 
 def get_product_model():

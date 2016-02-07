@@ -1,9 +1,8 @@
-import django
 from django.conf import settings
 
-if django.VERSION[:2] == (1, 9):
+try:
     from importlib import import_module
-else:
+except ImportError:
     from django.utils.importlib import import_module
 
 

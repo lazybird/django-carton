@@ -1,3 +1,14 @@
+django-carton-1.2.1
+===================
+
+Date:  Febuary, 2016.
+
+* Fix Django 1.9 compatibility issues with the import module
+
+
+* * *
+
+
 django-carton-1.2.0
 ===================
 

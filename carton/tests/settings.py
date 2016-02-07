@@ -14,6 +14,11 @@ INSTALLED_APPS = (
     'carton.tests',
 )
 
+MIDDLEWARE_CLASSES = (
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+)
+
 ROOT_URLCONF = 'carton.tests.urls'
 
 SECRET_KEY = 'any-key'

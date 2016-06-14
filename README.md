@@ -58,6 +58,8 @@ Template:
         {{ product.name }}
     {% endfor %}
 
+Within the template you can access the product id with {{product.id}}. 
+
 Settings:
 
     CART_PRODUCT_MODEL = 'products.models.Product'

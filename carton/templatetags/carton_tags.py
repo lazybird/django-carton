@@ -23,6 +23,6 @@ def get_cart(context, session_key=None, cart_class=Cart):
 
 try:
     register.simple_tag(takes_context=True, name=CART_TEMPLATE_TAG_NAME)(get_cart)
-except ImportError:
+except:
     register.assignment_tag(takes_context=True, name=CART_TEMPLATE_TAG_NAME)(get_cart)
 

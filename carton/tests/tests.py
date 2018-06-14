@@ -1,11 +1,6 @@
-from django.core.urlresolvers import reverse
-from django.test import TestCase
+from django.urls import reverse
+from django.test import TestCase, override_settings
 from carton.tests.models import Product
-
-try:
-    from django.test import override_settings
-except ImportError:
-    from  django.test.utils import override_settings
 
 
 class CartTests(TestCase):

@@ -1,17 +1,28 @@
+from rest_framework import mixins
 from rest_framework import viewsets
 from rest_framework.decorators import action
 
 
 from .models import Cart, CartItem
-from .serializers import CartItemSerializer
+from . import serializers as cart_serializers
 
 
-class CartItemViewSet(viewsets.ModelViewSet):
+class CartItemViewSet(mixins.RetrieveModelMixin,
+                      mixins.ListModelMixin,
+                      mixins.DestroyModelMixin,
+                      mixins.UpdateModelMixin,
+                      viewsets.GenericViewSet):
     """
     A viewset for managing shopping cart items.
     """
-    serializer_class = CartItemSerializer
-    lookup_field = 'product__pk'
+    lookup_field = 'product_id'
+
+    def get_serializer_class(self):
+        if self.action in ['update', 'partial_update']:
+            return cart_serializers.CartItemUpdateSerializer
+        if self.action in ['add']:
+            return cart_serializers.CartItemAddSerializer
+        return cart_serializers.CartItemSerializer
 
     def get_cart(self):
         session_key = self.request.session.session_key
@@ -30,33 +41,29 @@ class CartItemViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return self.cart.items.all()
 
-    def get_price(self, product):
+    def get_price(self, product_id):
         # TODO: how to get the price
-        return product.price or 100.00
-
-    def perform_create(self, serializer):
-        product = serializer.validated_data['product']
-        price = self.get_price(product)
-        serializer.save(cart=self.cart, price=price)
+        return 100.00
 
     @action(methods=['post'], detail=True)
-    def add(self, request, pk=None, *args, **kwargs):
+    def add(self, request, product_id=None, *args, **kwargs):
         """
         Add a cart item if it does not exist.
         Sum-up the the item is already there.
         """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        product = serializer.validated_data['product']
         try:
-            cart_item = self.cart.items.get(product=product)
+            cart_item = self.cart.items.get(product_id=product_id)
         except CartItem.DoesNotExist:
             cart_item = None
+        quantity_to_add = serializer.validated_data['quantity']
         if cart_item:
-            quantity_to_add = serializer.validated_data['quantity']
             serializer.data['quantity'] = cart_item.quantity + quantity_to_add
             cart_item.quantity = cart_item.quantity + quantity_to_add
             cart_item.save()
-            return self.retrieve(request, pk=pk, *args, **kwargs)
         else:
-            return self.create(request, *args, **kwargs)
+
+            price = self.get_price(product_id=product_id)
+            self.cart.items.create(product_id=product_id, quantity=quantity_to_add, price=price)
+        return self.retrieve(request, product_id=product_id, *args, **kwargs)

@@ -1,29 +1,31 @@
-from rest_framework import viewsets
+from django.db import IntegrityError
+from django.shortcuts import get_object_or_404
+
+from rest_framework import viewsets, mixins
 from rest_framework.decorators import action
-from rest_framework import status
-from rest_framework.response import Response
+from rest_framework.exceptions import ValidationError
 
 from .models import Cart, CartItem
 from . import serializers as cart_serializers
 
 
-class CartItemViewSet(viewsets.ModelViewSet):
+class CartViewSet(mixins.ListModelMixin,
+                  mixins.RetrieveModelMixin,
+                  mixins.UpdateModelMixin,
+                  mixins.DestroyModelMixin,
+                  viewsets.GenericViewSet):
     """
     A viewset for managing shopping cart items.
     """
-    lookup_field = 'product_id'
 
     def get_serializer_class(self):
-        if self.action in ['update', 'partial_update']:
-            return cart_serializers.CartItemUpdateSerializer
-        if self.action in ['add']:
-            return cart_serializers.CartItemAddSerializer
-        if self.action in ['create']:
-            return cart_serializers.CartItemCreateSerializer
-        return cart_serializers.CartItemSerializer
+        if self.action in ['update', 'partial_update', 'add']:
+            return cart_serializers.CartWriteSerializer
+        return cart_serializers.CartSerializer
 
     def get_cart(self):
         session_key = self.request.session.session_key
+        session_key = 'q1p4f04pg4i36d47mubkr85hotm8dgi2'
         if self.request.user.is_authenticated:
             cart, _ = Cart.objects.get_or_create(user=self.request.user)
             cart.session_key = session_key
@@ -43,45 +45,67 @@ class CartItemViewSet(viewsets.ModelViewSet):
         # TODO: how to get the price
         return 100.00
 
-    def create(self, request, *args, **kwargs):
+    def get_object(self):
+        queryset = self.get_queryset()
+        pk = self.kwargs.get('pk')
+        return get_object_or_404(queryset, product_id=pk)
 
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        product = serializer.validated_data.get('product')
+    def get_or_create_item(self, product_id):
+        """
+        Get the cart item for the given product id.
+        If does not exist, create one.
+        """
+        queryset = self.get_queryset()
         try:
-            cart_item = self.cart.items.get(product_id=product.id)
+            cart_item = queryset.get(product_id=product_id)
         except CartItem.DoesNotExist:
-            cart_item = None
-        quantity_to_add = serializer.validated_data['quantity']
-        if cart_item:
-            cart_item.quantity = quantity_to_add
-            cart_item.save()
-            return Response(serializer.data)
-        else:
-            price = self.get_price(product_id=product.id)
-            self.cart.items.create(product_id=product.id, quantity=quantity_to_add, price=price)
-        return self.retrieve(request, product_id=product.id, *args, **kwargs)
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+            price = self.get_price(product_id=product_id)
+            try:
+                cart_item = self.cart.items.create(
+                    product_id=product_id,
+                    quantity=0,
+                    price=price
+                )
+            except IntegrityError as e:
+                raise ValidationError({'detail': e})
+        return cart_item
+
+    def list(self, request, *args, **kwargs):
+        """
+        Get the list of cart items.
+        """
+        return super().list(request, *args, **kwargs)
+
+    def retrieve(self, request, *args, **kwargs):
+        """
+        Retrieve single items given the product ID.
+        """
+        return super().retrieve(request, *args, **kwargs)
 
     @action(methods=['post'], detail=True)
-    def add(self, request, product_id=None, *args, **kwargs):
+    def add(self, request, *args, **kwargs):
         """
         Add a cart item if it does not exist.
-        Sum-up the the item is already there.
+        Addup the quantity if the item is already there.
         """
+        pk = self.kwargs.get('pk')
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        try:
-            cart_item = self.cart.items.get(product_id=product_id)
-        except CartItem.DoesNotExist:
-            cart_item = None
         quantity_to_add = serializer.validated_data['quantity']
-        if cart_item:
-            serializer.data['quantity'] = cart_item.quantity + quantity_to_add
-            cart_item.quantity = cart_item.quantity + quantity_to_add
-            cart_item.save()
-        else:
-            price = self.get_price(product_id=product_id)
-            self.cart.items.create(product_id=product_id, quantity=quantity_to_add, price=price)
-        return self.retrieve(request, product_id=product_id, *args, **kwargs)
+        cart_item = self.get_or_create_item(product_id=pk)
+        cart_item.quantity = cart_item.quantity + quantity_to_add
+        cart_item.save()
+        return self.retrieve(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        """
+        Set the quantity if the product exist.
+        Add the product is it does not exist.
+        """
+        pk = self.kwargs.get('pk')
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        cart_item = self.get_or_create_item(product_id=pk)
+        cart_item.quantity = serializer.validated_data['quantity']
+        cart_item.save()
+        return self.retrieve(request, *args, **kwargs)

@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.utils.translation import ugettext as _
 
@@ -30,6 +31,7 @@ class CartItem(models.Model):
     product = models.ForeignKey(
         to=cart_settings.CART_PRODUCT_MODEL, verbose_name='produit',
         related_name='+', on_delete=models.CASCADE)
+    extra = JSONField(null=True, blank=True)
 
     class Meta:
         verbose_name = _('cart item')

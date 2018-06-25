@@ -100,6 +100,7 @@ class CartViewSet(mixins.ListModelMixin,
         quantity_to_add = serializer.validated_data['quantity']
         cart_item = self.get_or_create_item(product_id=pk)
         cart_item.quantity = cart_item.quantity + quantity_to_add
+        cart_item.extra = serializer.validated_data['extra']
         cart_item.save()
         return self.retrieve(request, *args, **kwargs)
 
@@ -113,5 +114,6 @@ class CartViewSet(mixins.ListModelMixin,
         serializer.is_valid(raise_exception=True)
         cart_item = self.get_or_create_item(product_id=pk)
         cart_item.quantity = serializer.validated_data['quantity']
+        cart_item.extra = serializer.validated_data['extra']
         cart_item.save()
         return self.retrieve(request, *args, **kwargs)

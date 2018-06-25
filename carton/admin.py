@@ -4,7 +4,7 @@ from .models import Cart, CartItem
 
 
 class BaseCartItemAdmin(object):
-    fields = ('product', 'quantity', 'price')
+    fields = ('product', 'quantity', 'price', 'extra')
     # readonly_fields = ('product', 'quantity', 'price')
 
 

@@ -7,12 +7,12 @@ class CartSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CartItem
-        fields = ('product', 'quantity', 'price')
+        fields = ('product', 'quantity', 'price', 'extra')
 
 
 class CartWriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CartItem
-        fields = ('product', 'quantity', 'price')
+        fields = ('product', 'quantity', 'price', 'extra')
         read_only_fields = ('price', 'product')

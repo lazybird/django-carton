@@ -39,6 +39,7 @@ class Cart(object):
     A cart that lives in the session.
     """
     def __init__(self, session, session_key=None):
+        self.cart_item_class = module_loading.get_cart_item_class()
         self._items_dict = {}
         self.session = session
         self.session_key = session_key or carton_settings.CART_SESSION_KEY
@@ -50,7 +51,7 @@ class Cart(object):
             products_queryset = self.get_queryset().filter(pk__in=ids_in_cart)
             for product in products_queryset:
                 item = cart_representation[str(product.pk)]
-                self._items_dict[product.pk] = CartItem(
+                self._items_dict[product.pk] = self.cart_item_class(
                     product, item['quantity'], Decimal(item['price'])
                 )
 
@@ -98,7 +99,8 @@ class Cart(object):
         else:
             if price == None:
                 raise ValueError('Missing price when adding to cart')
-            self._items_dict[product.pk] = CartItem(product, quantity, price)
+            self._items_dict[product.pk] = self.cart_item_class(
+                    product, quantity, price)
         self.update_session()
 
     def remove(self, product):

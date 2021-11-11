@@ -1,1 +1,6 @@
+# Byte-compiled
 *.pyc
+__pycache__/
+
+# Packaging
+django_carton.egg-info/
